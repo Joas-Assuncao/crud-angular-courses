@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CoursesService } from 'src/app/services/courses.service';
 import { UtilsFunctions } from 'src/app/shared/utils/UtilsFunctions';
@@ -32,7 +32,7 @@ export class CourseFormComponent implements OnInit {
   });
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private courseService: CoursesService,
     private utilsFunctions: UtilsFunctions,
     private location: Location,
