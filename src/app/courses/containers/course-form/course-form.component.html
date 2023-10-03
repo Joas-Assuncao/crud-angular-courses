@@ -8,11 +8,11 @@
           formControlName="name"
           #name
         />
-        <mat-hint [align]="'end'">{{ name.value?.length || 0 }} / 100</mat-hint>
-        <mat-error
-          *ngIf="form.get('name')?.invalid"
+        <mat-hint [align]="'end'"
+          >{{ name?.value?.length || 0 }} / 100</mat-hint
         >
-          {{ getErrorMessage('name') }}
+        <mat-error *ngIf="form.get('name')?.invalid">
+          {{ getErrorMessage("name") }}
         </mat-error>
       </mat-form-field>
 
@@ -24,10 +24,8 @@
           <mat-option value="Back-end">Back-end</mat-option>
           <mat-option value="FullStack">FullStack</mat-option>
         </mat-select>
-        <mat-error
-          *ngIf="form.get('category')?.invalid"
-        >
-          {{ getErrorMessage('category') }}
+        <mat-error *ngIf="form.get('category')?.invalid">
+          {{ getErrorMessage("category") }}
         </mat-error>
       </mat-form-field>
     </form>
@@ -38,10 +36,9 @@
       color="primary"
       (click)="onSubmit()"
       [disabled]="form.invalid"
-    >Salvar</button>
-    <button
-      mat-raised-button
-      (click)="onCancel()"
-    >Cancelar</button>
+    >
+      Salvar
+    </button>
+    <button mat-raised-button (click)="onCancel()">Cancelar</button>
   </mat-card-actions>
 </mat-card>

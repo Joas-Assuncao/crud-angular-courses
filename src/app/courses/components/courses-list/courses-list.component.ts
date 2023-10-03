@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { ICourse } from '../../model/course';
 
 @Component({
   selector: 'app-courses-list',
   templateUrl: './courses-list.component.html',
-  styleUrls: ['./courses-list.component.scss']
+  styleUrls: ['./courses-list.component.scss'],
 })
 export class CoursesListComponent implements OnInit {
-
   @Input() courses: ICourse[] = [];
 
   @Output() eventAddCourse = new EventEmitter();
@@ -16,19 +16,19 @@ export class CoursesListComponent implements OnInit {
 
   readonly displayedColumns = ['name', 'category', 'actions'];
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
-  onAddCourse() {
+  public onAddCourse() {
     this.eventAddCourse.emit();
   }
 
-  onEditCourse(course: ICourse) {
+  public onEditCourse(course: ICourse) {
     this.eventEditCourse.emit(course);
   }
 
-  onDeleteCourse(courseId: number) {
+  public onDeleteCourse(courseId: number) {
     this.eventDeleteCourse.emit(courseId);
   }
 }

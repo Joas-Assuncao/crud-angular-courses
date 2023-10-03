@@ -12,10 +12,9 @@ import { ICourse } from '../../model/course';
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
-  styleUrls: ['./courses.component.scss']
+  styleUrls: ['./courses.component.scss'],
 })
 export class CoursesComponent implements OnInit {
-
   courses$: Observable<ICourse[]>;
 
   displayedColumns = ['name', 'category', 'actions'];
@@ -25,70 +24,64 @@ export class CoursesComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private utilsFunctions: UtilsFunctions,
+    private utilsFunctions: UtilsFunctions
   ) {
     this.courses$ = this.getAllCourses();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  onError(errorMsg: string) {
+  public onError(errorMsg: string) {
     this.dialog.open(ErrorDialogComponent, {
       data: errorMsg,
-    })
+    });
   }
 
-  onAddCourse() {
+  public onAddCourse() {
     this.router.navigate(['new'], { relativeTo: this.route });
   }
 
-  onEditCourse(course: ICourse) {
+  public onEditCourse(course: ICourse) {
     this.router.navigate(['edit', course._id], { relativeTo: this.route });
   }
 
-  onDeleteCourse(courseId: number) {
+  public onDeleteCourse(courseId: number) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: 'Are you sure you want to remove this course?'
+      data: 'Are you sure you want to remove this course?',
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-      if(confirmed) {
+      if (confirmed) {
         this.coursesService.delete(courseId).subscribe({
-          next: result => {
+          next: (result) => {
             this.onSuccess('Course deleted succesfully');
           },
-          error: err => {
+          error: (err) => {
             this.onError('Error deleting course.');
-          }
-        })
+          },
+        });
       }
     });
   }
 
-  onSuccess(message: string) {
-    this.utilsFunctions.showSnack(
-      message,
-      'X',
-      {
-        verticalPosition: 'top',
-        horizontalPosition: 'center',
-      }
-    );
+  public onSuccess(message: string) {
+    this.utilsFunctions.showSnack(message, 'X', {
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+    });
 
     this.courses$ = this.getAllCourses();
   }
 
-  getAllCourses() {
-    return this.coursesService.findAll()
-      .pipe(
-        catchError(error => {
-          console.log(error);
+  private getAllCourses() {
+    return this.coursesService.findAll().pipe(
+      catchError((error) => {
+        console.log(error);
 
-          this.onError('Error loading courses.');
+        this.onError('Error loading courses.');
 
-          return of([]);
-        })
-      );
+        return of([]);
+      })
+    );
   }
 }
