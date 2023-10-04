@@ -19,7 +19,7 @@
       <mat-form-field class="full-width">
         <mat-label>Category</mat-label>
         <mat-select formControlName="category" placeholder="Course category">
-          <mat-option value="null">Selecione</mat-option>
+          <mat-option value="null">Select</mat-option>
           <mat-option value="Front-end">Front-end</mat-option>
           <mat-option value="Back-end">Back-end</mat-option>
           <mat-option value="FullStack">FullStack</mat-option>
@@ -30,30 +30,47 @@
       </mat-form-field>
 
       <mat-toolbar>
-        <span>Aulas</span>
-        <button mat-icon-button color="accent">
-          <mat-icon aria-label="Adicionar aula">add</mat-icon>
+        <span>Lessons</span>
+        <button mat-icon-button color="accent" (click)="addNewLesson()">
+          <mat-icon aria-label="Add lesson">add</mat-icon>
         </button>
       </mat-toolbar>
+
+      <mat-error *ngIf="isFormArrayValid()" class="form-array-error">
+        Add at least one lesson
+      </mat-error>
 
       <table
         style="width: 100%"
         formArrayName="lessons"
-        *ngFor="let lesson of getLessonsFormArray()"
+        *ngFor="let lesson of getLessonsFormArray(); let i = index"
       >
-        <tr>
+        <tr [formGroupName]="i">
           <td style="width: 65%">
             <mat-form-field class="full-width">
-              <mat-label>Nome da aula</mat-label>
+              <mat-label>Lesson name</mat-label>
               <input matInput formControlName="name" />
+              <mat-error *ngIf="getLessonsFormArray()[i].get('name')?.invalid">
+                Invalid field
+              </mat-error>
             </mat-form-field>
           </td>
           <td style="width: 30%">
             <mat-form-field class="full-width">
               <span matPrefix>https://youtu.be/</span>
               <mat-label>URL</mat-label>
-              <input matInput formControlName="name" />
+              <input matInput formControlName="youtubeUrl" />
+              <mat-error
+                *ngIf="getLessonsFormArray()[i].get('youtubeUrl')?.invalid"
+              >
+                Invalid field
+              </mat-error>
             </mat-form-field>
+          </td>
+          <td>
+            <button mat-icon-button color="warn" (click)="removeLesson(i)">
+              <mat-icon aria-label="Remove lesson">delete</mat-icon>
+            </button>
           </td>
         </tr>
       </table>
@@ -66,8 +83,8 @@
       (click)="onSubmit()"
       [disabled]="form.invalid"
     >
-      Salvar
+      Save
     </button>
-    <button mat-raised-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button (click)="onCancel()">Cancel</button>
   </mat-card-actions>
 </mat-card>

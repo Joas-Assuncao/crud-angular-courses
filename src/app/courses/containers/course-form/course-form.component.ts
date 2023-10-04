@@ -43,7 +43,7 @@ export class CourseFormComponent implements OnInit {
         ],
       ],
       category: [course.category, [Validators.required]],
-      lessons: this.fb.array(this.retrieveLessons(course)),
+      lessons: this.fb.array(this.retrieveLessons(course), Validators.required),
     });
   }
 
@@ -66,13 +66,37 @@ export class CourseFormComponent implements OnInit {
   ): FormGroup {
     return this.fb.group({
       id: [lesson.id],
-      name: [lesson.name],
-      youtubeUrl: [lesson.youtubeUrl],
+      name: [
+        lesson.name,
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(100),
+        ],
+      ],
+      youtubeUrl: [
+        lesson.youtubeUrl,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(11),
+        ],
+      ],
     });
   }
 
   public getLessonsFormArray() {
     return (<UntypedFormArray>this.form.get('lessons')).controls;
+  }
+
+  public addNewLesson() {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+  }
+
+  public removeLesson(index: number) {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+    lessons.removeAt(index);
   }
 
   public onSubmit() {
@@ -124,5 +148,11 @@ export class CourseFormComponent implements OnInit {
     }
 
     return 'Invalid field';
+  }
+
+  public isFormArrayValid() {
+    const lessons = this.form.get('lessons') as UntypedFormArray;
+
+    return !lessons.valid && lessons.touched && lessons.hasError('required');
   }
 }
