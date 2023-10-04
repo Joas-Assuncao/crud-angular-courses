@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { CoursesService } from 'src/app/services/courses.service';
 
 import { ICourse } from '../model/course';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CourseResolver implements Resolve<ICourse> {
-  constructor(private courseService: CoursesService) { }
+  constructor(private courseService: CoursesService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ICourse> {
+  resolve(route: ActivatedRouteSnapshot): Observable<ICourse> {
     const id = route.params['id'];
 
-    if(route.params && id) {
+    if (route.params && id) {
       return this.courseService.findById(id);
     }
 
@@ -22,6 +22,13 @@ export class CourseResolver implements Resolve<ICourse> {
       _id: '',
       name: '',
       category: '',
+      lessons: [
+        {
+          id: '',
+          name: '',
+          youtubeUrl: '',
+        },
+      ],
     });
   }
 }
