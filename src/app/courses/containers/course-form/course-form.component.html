@@ -12,7 +12,7 @@
           >{{ name?.value?.length || 0 }} / 100</mat-hint
         >
         <mat-error *ngIf="form.get('name')?.invalid">
-          {{ getErrorMessage("name") }}
+          {{ formUtils.getErrorMessage(form, "name") }}
         </mat-error>
       </mat-form-field>
 
@@ -25,7 +25,7 @@
           <mat-option value="FullStack">FullStack</mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('category')?.invalid">
-          {{ getErrorMessage("category") }}
+          {{ formUtils.getErrorMessage(form, "category") }}
         </mat-error>
       </mat-form-field>
 
@@ -36,7 +36,10 @@
         </button>
       </mat-toolbar>
 
-      <mat-error *ngIf="isFormArrayValid()" class="form-array-error">
+      <mat-error
+        *ngIf="formUtils.isFormArrayRequired(form, 'lessons')"
+        class="form-array-error"
+      >
         Add at least one lesson
       </mat-error>
 
@@ -51,7 +54,14 @@
               <mat-label>Lesson name</mat-label>
               <input matInput formControlName="name" />
               <mat-error *ngIf="getLessonsFormArray()[i].get('name')?.invalid">
-                Invalid field
+                {{
+                  formUtils.getFormArrayFieldErrorMessage(
+                    form,
+                    "lessons",
+                    "name",
+                    i
+                  )
+                }}
               </mat-error>
             </mat-form-field>
           </td>
@@ -63,7 +73,14 @@
               <mat-error
                 *ngIf="getLessonsFormArray()[i].get('youtubeUrl')?.invalid"
               >
-                Invalid field
+                {{
+                  formUtils.getFormArrayFieldErrorMessage(
+                    form,
+                    "lessons",
+                    "youtubeUrl",
+                    i
+                  )
+                }}
               </mat-error>
             </mat-form-field>
           </td>
@@ -81,7 +98,7 @@
       mat-raised-button
       color="primary"
       (click)="onSubmit()"
-      [disabled]="form.invalid"
+      [disabled]="isSubmitting"
     >
       Save
     </button>

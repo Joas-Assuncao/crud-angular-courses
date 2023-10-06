@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CoursesService } from 'src/app/services/courses.service';
+import { FormUtilsService } from 'src/app/shared/form/form-utils.service';
 import { UtilsFunctions } from 'src/app/shared/utils/UtilsFunctions';
 
 import { ICourse } from '../../model/course';
@@ -19,14 +20,17 @@ import { ILesson } from '../../model/lesson';
   styleUrls: ['./course-form.component.scss'],
 })
 export class CourseFormComponent implements OnInit {
-  form!: FormGroup;
+  public form!: FormGroup;
+
+  public isSubmitting!: boolean;
 
   constructor(
     private fb: UntypedFormBuilder,
     private courseService: CoursesService,
     private utilsFunctions: UtilsFunctions,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public formUtils: FormUtilsService
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +49,8 @@ export class CourseFormComponent implements OnInit {
       category: [course.category, [Validators.required]],
       lessons: this.fb.array(this.retrieveLessons(course), Validators.required),
     });
+
+    this.isSubmitting = false;
   }
 
   private retrieveLessons(course: ICourse): FormGroup[] {
@@ -100,14 +106,25 @@ export class CourseFormComponent implements OnInit {
   }
 
   public onSubmit() {
+    if (this.form.invalid) {
+      this.formUtils.validateAllFormFields(this.form);
+      return;
+    }
+
+    this.isSubmitting = true;
+
     this.courseService.save(this.form.value).subscribe({
       next: (result) => {
         this.onError('Course created successfully.');
 
         this.onCancel();
+
+        this.isSubmitting = false;
       },
       error: (err) => {
         this.onError('Error creating course.');
+
+        this.isSubmitting = false;
       },
     });
   }
@@ -124,35 +141,5 @@ export class CourseFormComponent implements OnInit {
 
   private onError(message: string) {
     this.utilsFunctions.showSnack(message);
-  }
-
-  public getErrorMessage(formName: string) {
-    const field = this.form.get(formName);
-
-    if (field?.hasError('required')) {
-      return 'Required field';
-    }
-
-    if (field?.hasError('minlength')) {
-      const requiredLength = field.errors
-        ? field.errors['minlength']['requiredLength']
-        : 5;
-      return `Minimum length needs to be ${requiredLength}`;
-    }
-
-    if (field?.hasError('maxlength')) {
-      const requiredLength = field.errors
-        ? field.errors['maxlength']['requiredLength']
-        : 100;
-      return `Maximum length needs to be ${requiredLength}`;
-    }
-
-    return 'Invalid field';
-  }
-
-  public isFormArrayValid() {
-    const lessons = this.form.get('lessons') as UntypedFormArray;
-
-    return !lessons.valid && lessons.touched && lessons.hasError('required');
   }
 }
